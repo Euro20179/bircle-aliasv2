@@ -1,6 +1,6 @@
 const form = document.getElementById("cmd-form")
 
-let [command, help, addArgButton, addOptButton, appendArgsBox, appendOptsBox, generate] = form.getElementsByTagName("input")
+let [command, help, addArgButton, addOptButton, appendArgsBox, appendOptsBox, standardizeOptsBox, generate] = form.getElementsByTagName("input")
 
 let cmdToRunEntry = document.getElementById("cmd-to-run")
 
@@ -143,6 +143,9 @@ generate.addEventListener("click", e => {
     }
     if (!appendOptsBox.checked) {
         commandToRun += ` -no-opts`
+    }
+    if(!standardizeOptsBox.checked){
+        commandToRun += ` -no-standardize`
     }
 
     commandToRun += ` -no-easy name ${command.value}`
