@@ -1,6 +1,6 @@
 const form = document.getElementById("cmd-form")
 
-let [command, help, addArgButton, addOptButton, appendArgsBox, appendOptsBox, standardizeOptsBox, generate] = form.getElementsByTagName("input")
+let [command, help, tagsInput, addTagButton, addArgButton, addOptButton, appendArgsBox, appendOptsBox, standardizeOptsBox, generate] = form.getElementsByTagName("input")
 
 let cmdToRunEntry = document.getElementById("cmd-to-run")
 
@@ -8,6 +8,44 @@ console.log(addArgButton)
 
 let argFields = []
 let optFields = []
+
+let tags = []
+
+class TagInputFields {
+    constructor(tagNo) {
+
+        this.tagNo = tagNo
+
+        this.tagInput = document.createElement("input")
+        this.tagInput.placeholder = "Tag name"
+        this.tagInput.required = true
+
+        this.removeButton = document.createElement("input")
+        this.removeButton.type = 'button'
+        this.removeButton.value = "-"
+
+        this.removeButton.addEventListener("click", (e => {
+            this.removeFromDocument()
+        }).bind(this))
+
+        this.br = document.createElement("br")
+
+        addTagButton.parentNode.insertBefore(this.tagInput, addTagButton)
+        addTagButton.parentNode.insertBefore(this.removeButton, addTagButton)
+        addTagButton.parentNode.insertBefore(this.br, addTagButton)
+    }
+    removeFromDocument() {
+        this.tagInput.remove()
+        this.removeButton.remove()
+        this.br.remove()
+
+        tags = tags.filter(v => v.tagNo !== this.tagNo)
+    }
+    genText() {
+        let text = `\ntag ${this.tagInput.value}`
+        return text
+    }
+}
 
 class ArgumentInputFields {
     constructor(argNo) {
@@ -133,6 +171,10 @@ addOptButton.addEventListener("click", e => {
     optFields.push(new OptionInputFields(optFields.length))
 })
 
+addTagButton.addEventListener("click", e => {
+    tags.push(new TagInputFields(tags.length))
+})
+
 
 
 generate.addEventListener("click", e => {
@@ -144,7 +186,7 @@ generate.addEventListener("click", e => {
     if (!appendOptsBox.checked) {
         commandToRun += ` -no-opts`
     }
-    if(!standardizeOptsBox.checked){
+    if (!standardizeOptsBox.checked) {
         commandToRun += ` -no-standardize`
     }
 
@@ -153,6 +195,14 @@ generate.addEventListener("click", e => {
 
     if (help.value) {
         commandToRun += `\nhelp-info ${help.value}`
+    }
+
+    if (tagsInput.value) {
+        commandToRun += `\ntags ${tagsInput.value}`
+    }
+
+    for (let tag of tags) {
+        commandToRun += tag.genText()
     }
 
     for (let arg of argFields) {
