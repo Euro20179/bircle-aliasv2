@@ -136,7 +136,7 @@ addOptButton.addEventListener("click", e => {
 
 
 generate.addEventListener("click", e => {
-    let commandToRun = `[n:aliasv2`
+    let commandToRun = `[n:alias`
 
     if (!appendArgsBox.checked) {
         commandToRun += ` -no-args`
