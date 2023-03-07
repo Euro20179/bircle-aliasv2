@@ -1,8 +1,66 @@
+
+function generateAlias() {
+    let commandToRun = `[n:alias`
+
+    if (!appendArgsBox.checked) {
+        commandToRun += ` -no-args`
+    }
+    if (!appendOptsBox.checked) {
+        commandToRun += ` -no-opts`
+    }
+    if (!standardizeOptsBox.checked) {
+        commandToRun += ` -no-standardize`
+    }
+
+    commandToRun += ` -no-easy name ${command.value}`
+
+
+    if (help.value) {
+        commandToRun += `\nhelp-info ${help.value}`
+    }
+
+    if (tagsInput.value) {
+        commandToRun += `\ntags ${tagsInput.value}`
+    }
+
+    for (let tag of tags) {
+        commandToRun += tag.genText()
+    }
+
+    for (let arg of argFields) {
+        commandToRun += arg.genText()
+    }
+
+    for (let opt of optFields) {
+        commandToRun += opt.genText()
+    }
+
+    if (!cmdToRunEntry.value) {
+        return
+    }
+    else {
+        commandToRun += `\ncommand ${cmdToRunEntry.value}`
+    }
+
+    let pre = document.getElementById("output")
+
+    while (pre.firstChild) {
+        pre.removeChild(pre.firstChild)
+    }
+
+    pre.append(commandToRun)
+
+}
+
 const form = document.getElementById("cmd-form")
 
 let [command, help, tagsInput, addTagButton, addArgButton, addOptButton, appendArgsBox, appendOptsBox, standardizeOptsBox, generate] = form.getElementsByTagName("input")
 
 let cmdToRunEntry = document.getElementById("cmd-to-run")
+
+form.addEventListener("input", e => {
+    generateAlias()
+})
 
 console.log(addArgButton)
 
@@ -31,6 +89,7 @@ class TagInputFields {
         this.br = document.createElement("br")
 
         addTagButton.parentNode.insertBefore(this.tagInput, addTagButton)
+        this.nameInput.focus()
         addTagButton.parentNode.insertBefore(this.removeButton, addTagButton)
         addTagButton.parentNode.insertBefore(this.br, addTagButton)
     }
@@ -76,6 +135,7 @@ class ArgumentInputFields {
         this.br = document.createElement("br")
 
         addArgButton.parentNode.insertBefore(this.nameInput, addArgButton)
+        this.nameInput.focus()
         addArgButton.parentNode.insertBefore(this.descriptionInput, addArgButton)
         addArgButton.parentNode.insertBefore(this.requiredInput, addArgButton)
         addArgButton.parentNode.insertBefore(this.defaultInput, addArgButton)
@@ -133,6 +193,7 @@ class OptionInputFields {
         this.br = document.createElement("br")
 
         addOptButton.parentNode.insertBefore(this.nameInput, addOptButton)
+        this.nameInput.focus()
         addOptButton.parentNode.insertBefore(this.descriptionInput, addOptButton)
         addOptButton.parentNode.insertBefore(this.altInput, addOptButton)
         addOptButton.parentNode.insertBefore(this.defaultInput, addOptButton)
@@ -178,54 +239,5 @@ addTagButton.addEventListener("click", e => {
 
 
 generate.addEventListener("click", e => {
-    let commandToRun = `[n:alias`
-
-    if (!appendArgsBox.checked) {
-        commandToRun += ` -no-args`
-    }
-    if (!appendOptsBox.checked) {
-        commandToRun += ` -no-opts`
-    }
-    if (!standardizeOptsBox.checked) {
-        commandToRun += ` -no-standardize`
-    }
-
-    commandToRun += ` -no-easy name ${command.value}`
-
-
-    if (help.value) {
-        commandToRun += `\nhelp-info ${help.value}`
-    }
-
-    if (tagsInput.value) {
-        commandToRun += `\ntags ${tagsInput.value}`
-    }
-
-    for (let tag of tags) {
-        commandToRun += tag.genText()
-    }
-
-    for (let arg of argFields) {
-        commandToRun += arg.genText()
-    }
-
-    for (let opt of optFields) {
-        commandToRun += opt.genText()
-    }
-
-    if (!cmdToRunEntry.value) {
-        alert("No command to run")
-        return
-    }
-    else {
-        commandToRun += `\ncommand ${cmdToRunEntry.value}`
-    }
-
-    let pre = document.getElementById("output")
-
-    while (pre.firstChild) {
-        pre.removeChild(pre.firstChild)
-    }
-
-    pre.append(commandToRun)
+    generateAlias()
 })
